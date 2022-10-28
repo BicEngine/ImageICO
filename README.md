@@ -17,9 +17,4 @@ following command in a root of your project.
 
 ## Usage
 
-```php
-$factory = new \Bic\Image\Factory();
-$factory->extend(new \Bic\Image\Ico\IcoDecoder());
-
-$images = $factory->fromPathname('path/to/image.ico');
-```
+- [Documentation](https://bic-engine.nesk.me)
