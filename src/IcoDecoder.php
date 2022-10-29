@@ -97,12 +97,17 @@ final class IcoDecoder implements DecoderInterface
             // Bytes per line
             $bytes = $format->getBytesPerPixel();
 
+            [$width, $height] = [
+                $ico->width ?: 256,
+                $ico->height ?: 256,
+            ];
+
             // Read image data
             $data = $info->width >= 0
-                ? Reader::bottomUp($stream, $ico->width ?: 256, $ico->height ?: 256, $bytes)
-                : Reader::topDown($stream, $ico->width ?: 256, $ico->height ?: 256, $bytes);
+                ? Reader::bottomUp($stream, $width, $height, $bytes)
+                : Reader::topDown($stream, $width, $height, $bytes);
 
-            yield new Image($format, $ico->width ?: 256, $ico->height ?: 256, $data);
+            yield new Image($format, $width, $height, $data);
         }
     }
 }
