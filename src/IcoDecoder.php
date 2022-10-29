@@ -14,7 +14,7 @@ use Bic\Image\Bmp\Internal\Compression;
 use Bic\Image\Ico\Exception\IcoException;
 use Bic\Image\Ico\Internal\IcoDirectory;
 use Bic\Image\DecoderInterface;
-use Bic\Image\Format;
+use Bic\Image\PixelFormat;
 use Bic\Image\Image;
 use Bic\Image\ImageInterface;
 use Bic\Image\Reader;
@@ -89,8 +89,8 @@ final class IcoDecoder implements DecoderInterface
 
             // Detect image format
             $format = match ($info->bitCount) {
-                24 => Format::B8G8R8,
-                32 => Format::B8G8R8A8,
+                24 => PixelFormat::B8G8R8,
+                32 => PixelFormat::B8G8R8A8,
                 default => throw BitMapBitDepthException::fromUnsupportedBits($info->bitCount, [24, 32]),
             };
 

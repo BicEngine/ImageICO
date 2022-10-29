@@ -6,7 +6,7 @@ namespace Bic\Image\Ico;
 
 use Bic\Image\Factory;
 use Bic\Image\FactoryInterface;
-use Bic\Image\Format;
+use Bic\Image\PixelFormat;
 use Bic\Image\Ico\Tests\TestCase;
 use Bic\Image\ImageInterface;
 
@@ -45,7 +45,7 @@ final class DecodingTestCase extends TestCase
         /** @var ImageInterface $image */
         [$image] = [...$this->images->fromPathname(__DIR__ . '/stubs/32bit.ico')];
 
-        $this->assertSame(Format::B8G8R8A8, $image->getFormat());
+        $this->assertSame(PixelFormat::B8G8R8A8, $image->getFormat());
         $this->assertSame(\file_get_contents(__DIR__ . '/stubs/32bit.bin'), $image->getContents());
     }
 
@@ -54,7 +54,7 @@ final class DecodingTestCase extends TestCase
         /** @var ImageInterface $image */
         [$image] = [...$this->images->fromPathname(__DIR__ . '/stubs/24bit.ico')];
 
-        $this->assertSame(Format::B8G8R8, $image->getFormat());
+        $this->assertSame(PixelFormat::B8G8R8, $image->getFormat());
         $this->assertSame(\file_get_contents(__DIR__ . '/stubs/24bit.bin'), $image->getContents());
     }
 }
