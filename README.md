@@ -1,7 +1,7 @@
 # ICO Image Decoder
 
 <p align="center">
-    <a href="https://github.com/BicEngine/ImageIco/actions"><img src="https://github.com/BicEngine/ImageIco/workflows/build/badge.svg"></a>
+    <a href="https://github.com/BicEngine/ImageICO/actions"><img src="https://github.com/BicEngine/ImageICO/workflows/build/badge.svg"></a>
 </p>
 
 ## Requirements
