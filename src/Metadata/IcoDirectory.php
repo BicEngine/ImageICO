@@ -24,17 +24,18 @@ namespace Bic\Image\Ico\Metadata;
 final class IcoDirectory
 {
     /**
-     * @param positive-int $width Specifies image width in pixels. Can be any
-     *                            number between 0 and 255. Value 0 means
-     *                            image width is 256 pixels.
-     * @param positive-int $height Specifies image height in pixels. Can be
-     *                             any number between 0 and 255. Value 0
-     *                             means image height is 256 pixels.
-     * @param positive-int $colors Specifies number of colors in the color
-     *                             palette. Should be 0 if the image does not
-     *                             use a color palette.
-     * @param positive-int $reserved Reserved. Should be 0.
-     * @param positive-int $colorPlanes Specifies color planes. Should be 0 or 1.
+     * @param positive-int|0 $width Specifies image width in pixels. Can be any
+     *                              number between 0 and 255. Value 0 means
+     *                              image width is 256 pixels.
+     * @param positive-int|0 $height Specifies image height in pixels. Can be
+     *                               any number between 0 and 255. Value 0
+     *                               means image height is 256 pixels.
+     * @param positive-int|0 $colors Specifies number of colors in the color
+     *                               palette. Should be 0 if the image does not
+     *                               use a color palette.
+     * @param int $reserved Reserved. Should be 0.
+     * @param positive-int|0 $colorPlanes Specifies color planes.
+     *                                    Should be 0 or 1.
      * @param positive-int $bitsPerPixel Specifies bits per pixel.
      * @param positive-int $size Specifies the size of the image's data in bytes.
      * @param positive-int $offset Specifies the offset of BMP or PNG data from

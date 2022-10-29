@@ -42,6 +42,8 @@ final class IcoDecoder implements DecoderInterface
      * @throws DdsCompressionException
      * @throws IcoException
      * @throws \Throwable
+     *
+     * @psalm-suppress ArgumentTypeCoercion
      */
     private function read(StreamInterface $stream): iterable
     {
@@ -59,6 +61,7 @@ final class IcoDecoder implements DecoderInterface
 
         // Read list of ICO directories
         for ($i = 0; $i < $images; ++$i) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $directories[] = $directory = new IcoDirectory(
                 width: $stream->int8(),
                 height: $stream->int8(),
@@ -98,10 +101,7 @@ final class IcoDecoder implements DecoderInterface
             // Bytes per line
             $bytes = $format->getBytesPerPixel();
 
-            [$width, $height] = [
-                $ico->width ?: 256,
-                $ico->height ?: 256,
-            ];
+            [$width, $height] = [$ico->width ?: 256, $ico->height ?: 256];
 
             // Read image data
             $data = $info->width >= 0
