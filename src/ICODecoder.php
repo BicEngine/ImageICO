@@ -9,7 +9,7 @@ use Bic\Binary\StreamInterface;
 use Bic\Binary\TypedStream;
 use Bic\Image\BMP\BitMapDecoder;
 use Bic\Image\BMP\Exception\BitMapBitDepthException;
-use Bic\Image\BMP\Exception\DdsCompressionException;
+use Bic\Image\BMP\Exception\CompressionException;
 use Bic\Image\BMP\Metadata\BitMapCompression;
 use Bic\Image\Compression;
 use Bic\Image\ICO\Exception\ICOException;
@@ -39,8 +39,8 @@ final class ICODecoder implements DecoderInterface
      *
      * @return iterable<ImageInterface>
      * @throws BitMapBitDepthException
-     * @throws DdsCompressionException
-     * @throws IcoException
+     * @throws CompressionException
+     * @throws ICOException
      * @throws \Throwable
      *
      * @psalm-suppress ArgumentTypeCoercion
@@ -74,7 +74,7 @@ final class ICODecoder implements DecoderInterface
             );
 
             if ($directory->colors > 0) {
-                throw new IcoException('Indexed colors not supported');
+                throw new ICOException('Indexed colors not supported');
             }
         }
 
@@ -88,7 +88,7 @@ final class ICODecoder implements DecoderInterface
 
             // Only RGB images is supported
             if ($info->compression !== BitMapCompression::RGB) {
-                throw DdsCompressionException::fromUnsupportedCompression($info->compression);
+                throw CompressionException::fromUnsupportedCompression($info->compression);
             }
 
             // Detect image format

@@ -6,6 +6,6 @@ namespace Bic\Image\ICO\Exception;
 
 use Bic\Image\Exception\ImageException;
 
-class IcoException extends ImageException
+class ICOException extends ImageException
 {
 }
