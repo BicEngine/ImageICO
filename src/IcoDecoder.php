@@ -10,7 +10,8 @@ use Bic\Binary\TypedStream;
 use Bic\Image\Bmp\BmpDecoder;
 use Bic\Image\Bmp\Exception\BitMapBitDepthException;
 use Bic\Image\Bmp\Exception\BitMapCompressionException;
-use Bic\Image\Bmp\Internal\Compression;
+use Bic\Image\Bmp\Internal\BitMapCompression;
+use Bic\Image\Compression;
 use Bic\Image\Ico\Exception\IcoException;
 use Bic\Image\Ico\Internal\IcoDirectory;
 use Bic\Image\DecoderInterface;
@@ -83,7 +84,7 @@ final class IcoDecoder implements DecoderInterface
             $info = BmpDecoder::readInfoHeader($stream);
 
             // Only RGB images is supported
-            if ($info->compression !== Compression::RGB) {
+            if ($info->compression !== BitMapCompression::RGB) {
                 throw BitMapCompressionException::fromUnsupportedCompression($info->compression);
             }
 
@@ -107,7 +108,17 @@ final class IcoDecoder implements DecoderInterface
                 ? Reader::bottomUp($stream, $width, $height, $bytes)
                 : Reader::topDown($stream, $width, $height, $bytes);
 
-            yield new Image($format, $width, $height, $data);
+            yield new Image(
+                format: $format,
+                width: $width,
+                height: $height,
+                contents: $data,
+                compression: Compression::NONE,
+                metadata: new IcoMetadata(
+                    directory: $ico,
+                    info: $info,
+                ),
+            );
         }
     }
 }
