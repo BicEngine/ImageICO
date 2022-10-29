@@ -7,13 +7,17 @@ namespace Bic\Image\Ico;
 use Bic\Binary\Endianness;
 use Bic\Binary\StreamInterface;
 use Bic\Binary\TypedStream;
-use Bic\Image\Ico\Internal\BitMapInfoHeader;
-use Bic\Image\Ico\Internal\Compression;
+use Bic\Image\Bmp\BmpDecoder;
+use Bic\Image\Bmp\Exception\BitMapBitDepthException;
+use Bic\Image\Bmp\Exception\BitMapCompressionException;
+use Bic\Image\Bmp\Internal\Compression;
+use Bic\Image\Ico\Exception\IcoException;
 use Bic\Image\Ico\Internal\IcoDirectory;
 use Bic\Image\DecoderInterface;
 use Bic\Image\Format;
 use Bic\Image\Image;
 use Bic\Image\ImageInterface;
+use Bic\Image\Reader;
 
 final class IcoDecoder implements DecoderInterface
 {
@@ -33,6 +37,10 @@ final class IcoDecoder implements DecoderInterface
      * @param StreamInterface $stream
      *
      * @return iterable<ImageInterface>
+     * @throws BitMapBitDepthException
+     * @throws BitMapCompressionException
+     * @throws IcoException
+     * @throws \Throwable
      */
     private function read(StreamInterface $stream): iterable
     {
@@ -62,7 +70,7 @@ final class IcoDecoder implements DecoderInterface
             );
 
             if ($directory->colors > 0) {
-                throw new \LogicException('Indexed colors not supported');
+                throw new IcoException('Indexed colors not supported');
             }
         }
 
@@ -72,93 +80,29 @@ final class IcoDecoder implements DecoderInterface
             $stream->seek($ico->offset);
 
             // Read BMP Header (40 bytes)
-            $info = new BitMapInfoHeader(
-                size: $stream->dword(),
-                width: $stream->long(),
-                height: $stream->long(),
-                planes: $stream->word(),
-                bitCount: $stream->word(),
-                compression: Compression::from($stream->dword()),
-                sizeImage: $stream->dword(),
-                xPelsPerMeter: $stream->long(),
-                yPelsPerMeter: $stream->long(),
-                clrUsed: $stream->dword(),
-                clrImportant: $stream->dword(),
-            );
+            $info = BmpDecoder::readInfoHeader($stream);
 
             // Only RGB images is supported
             if ($info->compression !== Compression::RGB) {
-                throw new \LogicException(\vsprintf('Unsupported image compression %s (0x%04X)', [
-                    $info->compression->name,
-                    $info->compression->value,
-                ]));
+                throw BitMapCompressionException::fromUnsupportedCompression($info->compression);
             }
 
             // Detect image format
-            $format = $this->getFormat($info->bitCount);
+            $format = match ($info->bitCount) {
+                24 => Format::B8G8R8,
+                32 => Format::B8G8R8A8,
+                default => throw BitMapBitDepthException::fromUnsupportedBits($info->bitCount, [24, 32]),
+            };
+
+            // Bytes per line
+            $bytes = $format->getBytesPerPixel();
 
             // Read image data
             $data = $info->width >= 0
-                ? $this->bottomUp($stream, $ico, $format)
-                : $this->topDown($stream, $ico, $format);
+                ? Reader::bottomUp($stream, $ico->width ?: 256, $ico->height ?: 256, $bytes)
+                : Reader::topDown($stream, $ico->width ?: 256, $ico->height ?: 256, $bytes);
 
             yield new Image($format, $ico->width ?: 256, $ico->height ?: 256, $data);
         }
-    }
-
-    /**
-     * @return iterable<non-empty-string>
-     * @throws \Throwable
-     */
-    private function lines(TypedStream $stream, IcoDirectory $ico, Format $format): iterable
-    {
-        $width = $ico->width ?: 256;
-        $length = $format->getBytesPerPixel() * $width;
-
-        if (\Fiber::getCurrent()) {
-            for ($y = 0, $lines = $ico->height ?: 256; $y < $lines; ++$y) {
-                yield $chunk = $stream->read($length);
-                \Fiber::suspend($chunk);
-            }
-        } else {
-            for ($y = 0, $lines = $ico->height ?: 256; $y < $lines; ++$y) {
-                yield $stream->read($length);
-            }
-        }
-    }
-
-    private function bottomUp(TypedStream $stream, IcoDirectory $ico, Format $format): string
-    {
-        $result = '';
-
-        foreach ($this->lines($stream, $ico, $format) as $line) {
-            $result = $line . $result;
-        }
-
-        return $result;
-    }
-
-    private function topDown(TypedStream $stream, IcoDirectory $ico, Format $format): string
-    {
-        $result = '';
-
-        foreach ($this->lines($stream, $ico, $format) as $line) {
-            $result .= $line;
-        }
-
-        return $result;
-    }
-
-    private function getFormat(int $bits): Format
-    {
-        return match (true) {
-            // BGRA
-            $bits === 32 => Format::B8G8R8A8,
-            // BGR
-            $bits === 24 => Format::B8G8R8,
-            default => throw new \LogicException(
-                \sprintf('Supported only B8G8R8A8 (32bit) or B8G8R8 (24bit), but %d given', $bits)
-            ),
-        };
     }
 }
