@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Bic\Image\Ico;
+namespace Bic\Image\ICO;
 
 use Bic\Image\Factory;
 use Bic\Image\FactoryInterface;
 use Bic\Image\PixelFormat;
-use Bic\Image\Ico\Tests\TestCase;
+use Bic\Image\ICO\Tests\TestCase;
 use Bic\Image\ImageInterface;
 
 final class DecodingTestCase extends TestCase
@@ -16,7 +16,7 @@ final class DecodingTestCase extends TestCase
 
     public function setUp(): void
     {
-        $this->images = new Factory([new IcoDecoder()]);
+        $this->images = new Factory([new ICODecoder()]);
 
         parent::setUp();
     }

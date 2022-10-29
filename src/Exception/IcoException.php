@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bic\Image\Ico\Exception;
+namespace Bic\Image\ICO\Exception;
 
 use Bic\Image\Exception\ImageException;
 

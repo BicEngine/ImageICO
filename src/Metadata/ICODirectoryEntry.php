@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bic\Image\Ico\Metadata;
+namespace Bic\Image\ICO\Metadata;
 
 /**
  * Icon Entry info (16 bytes)
@@ -21,7 +21,7 @@ namespace Bic\Image\Ico\Metadata;
  *  } ICONDIRENTRY, *LPICONDIRENTRY;
  * </code>
  */
-final class IcoDirectory
+final class ICODirectoryEntry
 {
     /**
      * @param positive-int|0 $width Specifies image width in pixels. Can be any

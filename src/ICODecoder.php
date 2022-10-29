@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Bic\Image\Ico;
+namespace Bic\Image\ICO;
 
 use Bic\Binary\Endianness;
 use Bic\Binary\StreamInterface;
 use Bic\Binary\TypedStream;
-use Bic\Image\Bmp\BmpDecoder;
-use Bic\Image\Bmp\Exception\BitMapBitDepthException;
-use Bic\Image\Bmp\Exception\DdsCompressionException;
-use Bic\Image\Bmp\Metadata\BitMapCompression;
+use Bic\Image\BMP\BitMapDecoder;
+use Bic\Image\BMP\Exception\BitMapBitDepthException;
+use Bic\Image\BMP\Exception\DdsCompressionException;
+use Bic\Image\BMP\Metadata\BitMapCompression;
 use Bic\Image\Compression;
-use Bic\Image\Ico\Exception\IcoException;
-use Bic\Image\Ico\Metadata\IcoDirectory;
+use Bic\Image\ICO\Exception\ICOException;
+use Bic\Image\ICO\Metadata\ICODirectoryEntry;
 use Bic\Image\DecoderInterface;
 use Bic\Image\PixelFormat;
 use Bic\Image\Image;
 use Bic\Image\ImageInterface;
 use Bic\Image\Reader;
 
-final class IcoDecoder implements DecoderInterface
+final class ICODecoder implements DecoderInterface
 {
     /**
      * {@inheritDoc}
@@ -49,7 +49,7 @@ final class IcoDecoder implements DecoderInterface
     {
         $stream = new TypedStream($stream, Endianness::LITTLE);
 
-        /** @var array<IcoDirectory> $directories */
+        /** @var array<ICODirectoryEntry> $directories */
         $directories = [];
 
         // --- ICO Header ---
@@ -62,7 +62,7 @@ final class IcoDecoder implements DecoderInterface
         // Read list of ICO directories
         for ($i = 0; $i < $images; ++$i) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $directories[] = $directory = new IcoDirectory(
+            $directories[] = $directory = new ICODirectoryEntry(
                 width: $stream->int8(),
                 height: $stream->int8(),
                 colors: $stream->int8(),
@@ -84,7 +84,7 @@ final class IcoDecoder implements DecoderInterface
             $stream->seek($ico->offset);
 
             // Read BMP Header (40 bytes)
-            $info = BmpDecoder::readInfoHeader($stream);
+            $info = BitMapDecoder::readInfoHeader($stream);
 
             // Only RGB images is supported
             if ($info->compression !== BitMapCompression::RGB) {
@@ -114,8 +114,8 @@ final class IcoDecoder implements DecoderInterface
                 height: $height,
                 contents: $data,
                 compression: Compression::NONE,
-                metadata: new IcoMetadata(
-                    directory: $ico,
+                metadata: new ICOMetadata(
+                    entry: $ico,
                     info: $info,
                 ),
             );

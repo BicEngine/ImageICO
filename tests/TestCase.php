@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bic\Image\Ico\Tests;
+namespace Bic\Image\ICO\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
