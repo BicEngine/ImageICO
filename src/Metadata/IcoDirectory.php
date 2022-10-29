@@ -2,13 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Bic\Image\Ico\Internal;
+namespace Bic\Image\Ico\Metadata;
 
 /**
  * Icon Entry info (16 bytes)
  *
- * @internal This is an internal library class, please do not use it in your code.
- * @psalm-internal Bic\Image\Ico
+ * <code>
+ *  typedef struct
+ *  {
+ *      BYTE        bWidth;          // Width, in pixels, of the image
+ *      BYTE        bHeight;         // Height, in pixels, of the image
+ *      BYTE        bColorCount;     // Number of colors in image (0 if >=8bpp)
+ *      BYTE        bReserved;       // Reserved ( must be 0)
+ *      WORD        wPlanes;         // Color Planes
+ *      WORD        wBitCount;       // Bits per pixel
+ *      DWORD       dwBytesInRes;    // How many bytes in this resource?
+ *      DWORD       dwImageOffset;   // Where in the file is this image?
+ *  } ICONDIRENTRY, *LPICONDIRENTRY;
+ * </code>
  */
 final class IcoDirectory
 {

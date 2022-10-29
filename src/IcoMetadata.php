@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Bic\Image\Ico;
 
-use Bic\Image\Bmp\Internal\BitMapInfoHeader;
-use Bic\Image\Ico\Internal\IcoDirectory;
+use Bic\Image\Bmp\Metadata\BitMapInfoHeader;
+use Bic\Image\Ico\Metadata\IcoDirectory;
 
 final class IcoMetadata
 {
